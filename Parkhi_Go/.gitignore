@@ -1,0 +1,67 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of the go build command
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+.env
+.env.*
+
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage files
+coverage.out
+coverage.html
+
+# Build/output directories
+bin/
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+
+# Runtime satellite rasters & preview image cache (CRITICAL - otherwise hundreds of MBs will be committed)
+data/
+data/geotiffs/
+data/previews/
+data/raw/
+data/overlays/
+data/reports/
+
+# Compiled Go server binaries
+server.exe
+*.exe
+
+# Secrets & local environment variables
+.env
+.env.local
+
+# Scratch and test files
+scratch/
+clean_db.go
+*.tif
+*.tiff

@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package satellite;
+
+option go_package = "yukti/proto/satellite;satellite";
+
+// Service implemented by FastAPI/Python ML service and invoked by Go backend
+service ModelPipeline {
+  // Bi-directional / streaming RPC for raw multispectral satellite band streaming (1MB chunks)
+  // and streaming back processed Super-Resolution GeoTIFF, preview PNG/JPG, uncertainty map, and metrics.
+  rpc SuperResolve (stream SatelliteChunk) returns (stream ProcessResult);
+
+  // Downstream analysis execution (Crop classification, Urban segmentation, Disaster change detection)
+  rpc RunAnalysis (AnalysisRequest) returns (stream ProcessResult);
+}
+
+// SatelliteChunk represents a chunk in the stream
+message SatelliteChunk {
+  oneof payload {
+    SatelliteMetadata metadata = 1;
+    bytes chunk_data = 2;
+  }
+}
+
+// Metadata sent as the first chunk in the SuperResolve stream
+message SatelliteMetadata {
+  string job_id = 1;
+  string tile_id = 2;
+  repeated double bounding_box = 3; // [min_lat, min_lon, max_lat, max_lon]
+  repeated string bands = 4;        // e.g. ["B02", "B03", "B04", "B08"]
+  int64 total_bytes = 5;
+  string content_type = 6;          // e.g. "application/zip", "image/tiff", "raw/multiband"
+  string acquisition_date = 7;
+}
+
+// AnalysisRequest for downstream models
+message AnalysisRequest {
+  string job_id = 1;
+  string mode = 2;                  // "crop", "urban", "disaster"
+  string high_res_geotiff_path = 3; // Local path or cloud URI of super-resolved GeoTIFF
+  bytes current_geotiff_data = 4;   // Optional direct GeoTIFF byte payload
+  bytes historical_data = 5;        // Historical imagery/tensor bytes (for disaster change-detection)
+  string historical_date = 6;       // Date of the historical image
+  repeated double bounding_box = 7; // AOI coordinates [min_lat, min_lon, max_lat, max_lon]
+}
+
+// ProcessResult streamed back from the ML service to Go backend
+message ProcessResult {
+  string job_id = 1;
+  string status = 2;                // "PROCESSING", "COMPLETE", "ERROR"
+  float progress = 3;               // 0.0 to 100.0
+  string message = 4;               // Human-readable status (e.g. "Running SwinIR...")
+  
+  // Output layers (GeoTIFF + Visual JPG/PNG + Uncertainty Map)
+  bytes geotiff_data = 5;           // High-resolution scientific GeoTIFF bytes
+  bytes preview_image_data = 6;     // 8-bit visual JPG/PNG preview
+  bytes uncertainty_image_data = 7; // Uncertainty heatmap image bytes
+  bytes analysis_overlay_data = 8;  // Overlay mask (segmentation or damage map)
+
+  QualityMetrics metrics = 9;       // Scientific super-resolution evaluation metrics
+  AnalysisOutput analysis = 10;     // Downstream analysis legend & summary
+  string error_message = 11;        // Detailed error description if status == "ERROR"
+}
+
+// Quality metrics computed on the super-resolved output
+message QualityMetrics {
+  double psnr = 1;                  // Peak Signal-to-Noise Ratio (dB)
+  double ssim = 2;                  // Structural Similarity Index
+  double sam = 3;                   // Spectral Angle Mapper (degrees)
+  double ergas = 4;                 // Relative Dimensionless Global Error
+  double ndvi_mae = 5;              // Normalized Difference Vegetation Index Mean Absolute Error
+}
+
+// Downstream analysis summary and category legend
+message AnalysisOutput {
+  string mode = 1;                  // "crop", "urban", "disaster"
+  string summary = 2;               // High-level interpretation
+  repeated LegendItem legend = 3;   // Classes and associated color hex codes
+}
+
+message LegendItem {
+  string label = 1;                 // e.g. "Rice Paddy", "Commercial", "Severe Damage"
+  string color = 2;                 // Hex color, e.g. "#84CC16"
+}

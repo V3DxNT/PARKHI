@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Parkhi",
+    "slug": "parkhi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logoimages/Logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logoimages/Logo-bg.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1120"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.parkhi.satsr"
+    },
+    "android": {
+      "package": "com.parkhi.satsr",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1120",
+        "foregroundImage": "./assets/logoimages/Logo-bg.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/logoimages/Logo-bg.png"
+    },
+    "plugins": [
+      "expo-sharing"
+    ]
+  }
+}

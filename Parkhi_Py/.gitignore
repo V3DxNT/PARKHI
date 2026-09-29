@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+.venv/
+envs/
+
+# Environment variables / secrets
+.env
+*.env
+
+# Data
+data/
+checkpoints/
+logs/
+outputs/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.ds_store
+Thumbs.db
+
+# ML Model Weights / Checkpoints
+
+*.onnx
+*.bin
+*.h5
+*.hdf5
+*.ckpt
+
+# Geospatial & Temporary Outputs
+*.tif
+*.tiff
+*.png
+*.jpg
+*.geojson
+
+# Large Archives
+*.zip
+*.tar
+*.gz
+
+# Old backup folder created before refactoring
+app/models/super_resolution_backup/
+
+# Embedded HAT submodule (has its own .git folder; prevents git submodule conflict warnings)
+HAT/
+
+# Model weights / checkpoints (HAT_S_best.pth is ~30MB; ignore if distributing via releases)
+*.pth
+weights/*.pth
+# Keep HAT_S_best.pth (~28.4MB, within GitHub 100MB limit) so the repo works out of the box
+!app/models/super_resolution/weights/HAT_S_best.pth
+
+# Temporary rasters and preview outputs
+data/
+data/previews/
+*.tif
+*.tiff
+test_*.png
+
+# Python virtual environment & bytecode
+venv/
+.venv/
+__pycache__/
+*.pyc
+
